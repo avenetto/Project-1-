@@ -12,12 +12,15 @@ install.packages("tidytuesdayR")\
 ```{r setup, include=FALSE}
 library(tidytuesdayR)
 library(tidyverse)
+library(ggrepel)    
+library(ggtext)
 ```
 
 ```{r}
 chocolate <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv')
 ```
-#This project aims to examine which country in north america manufactures the highest rated chocolate in the last 5 years 
+#This project aims to examine which country manufactured the highest rated chocolate in 2021
+
 #Data was found here: https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/readme.md
 
 ```{r}
@@ -37,10 +40,9 @@ chocolate_clean <- chocolate %>%
 rating <- "rating"
 country <- "country"
 year <- "year"
-canada <- "canada"
-U.S.A. <- "U.S.A."
-mexico <- "mexico"
+
 ```
+#clean the data by filtering the year 2021, droping all NA from year and country, sumamrzing the ratings as thr mean rating per country for that year,selecting only country, year, and rating columns
 ```{r}
 chocolate_rates <- chocolate_clean %>% 
  filter(year %in% c(2021)) %>% 
@@ -50,7 +52,6 @@ summarize(rating = mean(rating))
 ungroup() %>%  
   select(country, year, rating) %>% 
 
-  #filter(year %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %>%
 
   #making the data set wider
 pivot_wider(
@@ -58,15 +59,15 @@ pivot_wider(
    names_from = (year), 
    values_from = rating,
    ) 
-  #pivot_longer(
-    #cols = country, year,
-    #names_to = c("country"),
-    
-#values_to = "year"
  
 chocolate_rates
 ```
+#Making a plot for data vizualisation 
 ```{r}
+update_geom_defaults("text", list(family = "FiraGO"))
+update_geom_defaults("label", list(family = "FiraGO"))
+update_geom_defaults("label_repel", list(family = "FiraGO"))
+
 ggplot(chocolate_rates) +
   aes( x = rating,
     y = country, 
@@ -75,3 +76,4 @@ ggplot(chocolate_rates) +
    ) +
   geom_point() 
 ```
+#overall, based on the plot, the country with the highest ranked chocolate in the year 2021 was France. Scotland had the lowest ranked chocolate. 
