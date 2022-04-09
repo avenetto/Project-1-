@@ -17,7 +17,7 @@ library(tidyverse)
 ```{r}
 chocolate <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv')
 ```
-#This project aims to examine which country manufactures the highest rated chocolate in the last 5 years 
+#This project aims to examine which country in north america manufactures the highest rated chocolate in the last 5 years 
 #Data was found here: https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/readme.md
 
 ```{r}
@@ -37,29 +37,41 @@ chocolate_clean <- chocolate %>%
 rating <- "rating"
 country <- "country"
 year <- "year"
+canada <- "canada"
+U.S.A. <- "U.S.A."
+mexico <- "mexico"
 ```
 ```{r}
-chocolate_clean <- chocolate_clean %>% 
-  filter(year %in% c(2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022)) %>%
-#drop_na(rating, country, year)%>%
- group_by(country, year)%>%
-  ungroup() %>%
-  select(country, year, rating) %>%
-  mutate(rating = mean(rating))%>%
-  #making the data set wider
- # pivot_wider(names_from = country, year, values_from = rating)
-  pivot_longer(
-    cols = USA:Austria,
-    names_to = c("country"),
-    values_to = "rating"
-  )
-chocolate_clean
-```
-```{r}
-ggplot(chocolate_clean) +
-  aes(x = country,
+chocolate_rates <- chocolate_clean %>% 
+ filter(year %in% c(2021)) %>% 
+  drop_na(country, rating) %>%
+ group_by(country)%>%   
+summarize(rating = mean(rating))
+ungroup() %>%  
+  select(country, year, rating) %>% 
 
-      fill = country,
-      color = country) +
-  geom_bar() 
+  #filter(year %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %>%
+
+  #making the data set wider
+pivot_wider(
+   id_cols = country,
+   names_from = (year), 
+   values_from = rating,
+   ) 
+  #pivot_longer(
+    #cols = country, year,
+    #names_to = c("country"),
+    
+#values_to = "year"
+ 
+chocolate_rates
+```
+```{r}
+ggplot(chocolate_rates) +
+  aes( x = rating,
+    y = country, 
+      color = country,
+      fill= country
+   ) +
+  geom_point() 
 ```
