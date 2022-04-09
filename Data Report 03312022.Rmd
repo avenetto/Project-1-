@@ -1,0 +1,23 @@
+---
+title: "Data report"
+author: "Angelina Venetto"
+date: "3/31/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+install.packages("tidytuesdayR")\
+library)tidyverse::
+```
+
+```{r}
+chocolate <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv')
+```
+```{r}
+ggplot(chocolate) +
+  aes(x = country_of_bean_origin,
+      y = rating,
+      fill = rating,
+      color = rating) +
+  geom_point() 
+```
